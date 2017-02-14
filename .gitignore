@@ -9,5 +9,10 @@ Session.vim
 *.pyc
 __pycache__
 
+# python setup
+dist/
+build/
+function_profiler.egg-info/
+
 # logs
 *.log

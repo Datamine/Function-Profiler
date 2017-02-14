@@ -47,23 +47,7 @@ If you don't want the summary statistics but rather more granular ones, you can 
 - `profiler.FunctionLogger.call_frequencies` is a dict mapping each function to the number of times it has been called.
 - `profiler.FunctionLogger.call_times` is a dict mapping each function to a list of how long it took to complete each function call.
 
-## Errors
-
-Note that `profiler.FunctionLogger` acts as a context manager on a function call. Consequently,
-a function that does not exit will not have its call time logged. Common cases in which you
-might face this error include interrupting the program before a function call finishes, or
-writing a function that exceeds the maximum recursion depth (so functions are repeatedly entered, but never exited before erring).
-
-## Tests
-
-It is possible to run tests for `profiler` before installing the module.
-
-From the top-level directory, simply run `python3 run-tests.py`. (In order to run
-the tests without installing the package, the tests use `os.getcwd()` and
-then try to locate the `profiler` module using its relative path, which assumes that
-the tests are being run from the top-level directory.)
-
-## Setup Instructions
+## Setup
 
 There are two ways to install this package from the terminal:
 
@@ -79,6 +63,22 @@ There are two ways to install this package from the terminal:
 
 In either of these ways, it may be acceptable to use `pip` or `python` instead of
 `pip3` and `python3` respectively, depending on your local configuration.
+
+## Tests
+
+It is possible to run tests for `profiler` before installing the module.
+
+From the top-level directory, simply run `python3 run-tests.py`. (In order to run
+the tests without installing the package, the tests use `os.getcwd()` and
+then try to locate the `profiler` module using its relative path, which assumes that
+the tests are being run from the top-level directory.)
+
+## Common Errors
+
+Note that `profiler.FunctionLogger` acts as a context manager on a function call. Consequently,
+a function that does not exit will not have its call time logged. Common cases in which you
+might face this error include interrupting the program before a function call finishes, or
+writing a function that exceeds the maximum recursion depth (so functions are repeatedly entered, but never exited before erring).
 
 ## PyPI
 

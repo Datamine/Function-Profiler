@@ -3,6 +3,7 @@
 tests for profiler/profiler.py
 """
 
+import unittest
 import os, sys
 sys.path.append(os.getcwd())
 

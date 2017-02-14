@@ -1,11 +1,39 @@
-# Function-Profiler
+#Function-Profiler
 
-Small Python Module to Profile Function Performance
+Python Module to Profile Function Performance: records the number of calls and
+outputs statistics about function execution times.
 
 ## Compatibility
 
 This package is intended for Python 3. It may also work for Python 2, but this 
 compatibility will not be ensured or tested for.
+
+## Explanation & Example
+
+The profiler has two components: a decorator and a class. The decorator, `@profiler.function_profiler`,
+uses the `profiler.FunctionLogger` class as a context manager. 
+The `FunctionLogger` incrementally stores, as *class variables*, the number of calls 
+to each decorated function, as well as how long it took to execute each function. 
+A summary of this data can then be printed in the end using the `log_data` method.
+More granular reports can be accessed by calling the class variables directly.
+
+```
+import profiler
+
+@profiler.function_profiler
+def foo():
+    return
+
+foo()
+foo()
+foo()
+
+profiler.FunctionLogger.log_data('stdout')
+```
+output:
+```
+foo: 3 calls. Time stats (seconds): Min: 0.000001, Mean: 0.000002, Median: 0.000001, Max: 0.000003
+```
 
 ## Setup Instructions
 

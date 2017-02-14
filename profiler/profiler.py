@@ -4,7 +4,7 @@ import numpy as np
 
 """
 Implements a decorator that counts the number of times a function was called,
-and collects stats on how long it took to execute every single function call.
+and collects statistics on how long it took to execute every single function call.
 """
 
 class FunctionLogger(object):
@@ -59,7 +59,8 @@ class FunctionLogger(object):
 
 def function_profiler(function):
     """
-    decorator that uses FunctionLogger to log information about this call of the function.
+    decorator that uses FunctionLogger as a context manager to
+    log information about this call of the function.
     """
     def wrapper(*args, **kwargs):
         with FunctionLogger(function):

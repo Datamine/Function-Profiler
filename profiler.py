@@ -33,8 +33,10 @@ class FunctionLogger(object):
         logs the class variables to stdout, stderr, or to a file.
         """
         for function_key in FunctionLogger.call_frequencies.keys():
-            call_freq = FunctionLogger.call_frequencies[function_key]
-            call_times = FunctionLogger.call_times[function_key]
+            call_freq = FunctionLogger.call_frequencies.get(function_key, 0)
+            call_times = FunctionLogger.call_times.get(function_key, [])
+
+            stats_string = "No stats were recorded for this function. This is most likely an error."
             if call_times != []:
                 # call_times == [] iff __enter__ was called with some function, but __exit__ was not
                 stats_string = "Min: {:08f}, Mean: {:08f}, Median: {:08f}, Max: {:08f}".format(np.min(call_times), np.mean(call_times), np.median(call_times), np.max(call_times))

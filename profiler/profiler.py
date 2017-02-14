@@ -11,7 +11,7 @@ class FunctionLogger(object):
     """
     stores two dictionaries:
         - call_frequencies: mapping of function names to counts of how often they've been called
-        - call_times: mapping of functon names to lists of how long it took to execute a fn call
+        - call_times: mapping of function names to lists of how long it took to execute a fn call
     """
     call_frequencies = {}
     call_times = {}

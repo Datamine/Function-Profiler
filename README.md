@@ -82,5 +82,5 @@ writing a function that exceeds the maximum recursion depth (so functions are re
 
 ## PyPI
 
-This package lives [here](https://pypi.python.org/pypi?name=function-profiler&version=0.1&:action=display) on PyPI.
+This package lives [here](https://pypi.python.org/pypi/function-profiler) on PyPI.
 

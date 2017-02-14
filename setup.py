@@ -8,4 +8,9 @@ setup(
     author='John Loeber',
     author_email='contact@johnloeber.com',
     packages=['profiler'],
+    license='MIT',
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Programming Language :: Python :: 3.6',
+    ],
 )

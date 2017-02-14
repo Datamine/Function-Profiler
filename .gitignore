@@ -14,5 +14,8 @@ dist/
 build/
 function_profiler.egg-info/
 
+# virtual environment
+venv/
+
 # logs
 *.log

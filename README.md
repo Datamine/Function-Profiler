@@ -11,11 +11,11 @@ compatibility will not be ensured or tested for.
 
 There are two ways to install this package from the terminal:
 
-Directly from PyPI:
+**Directly from PyPI (recommended):**
 
 `pip install function-profiler` 
 
-From source:
+**From source:**
 
 1. `git clone https://github.com/Datamine/Function-Profiler`
 2. `cd Function-Profiler`
@@ -25,7 +25,7 @@ In either of these ways, you may need to swap `pip` for `pip3` or `python`
 for `python3`, depending on your local configurations.
 
 
-## PyPi
+## PyPI
 
 This package lives [here](https://pypi.python.org/pypi?name=function-profiler&version=0.1&:action=display) on PyPI.
 

@@ -1,6 +1,6 @@
 #Function-Profiler
 
-Python Module to Profile Function Performance: records the number of calls and
+Python module to profile function performance: records the number of calls and
 outputs statistics about function execution times.
 
 ## Compatibility

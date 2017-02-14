@@ -60,7 +60,7 @@ It is possible to run tests for `profiler` before installing the module.
 
 From the top-level directory, simply run `python3 run-tests.py`. (In order to run
 the tests without installing the package, the tests use `os.getcwd()` and
-then try to locate the `profiler` module using its relative path, assuming that
+then try to locate the `profiler` module using its relative path, which assumes that
 the tests are being run from the top-level directory.)
 
 ## Setup Instructions

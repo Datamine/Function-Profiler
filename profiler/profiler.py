@@ -39,7 +39,7 @@ class FunctionLogger(object):
             stats_string = "No stats were recorded for this function. This is most likely an error."
             if call_times != []:
                 # call_times == [] iff __enter__ was called with some function, but __exit__ was not
-                stats_string = "Min: {:08f}, Mean: {:08f}, Median: {:08f}, Max: {:08f}".format(np.min(call_times), np.mean(call_times), np.median(call_times), np.max(call_times))
+                stats_string = "Min: {:08f}, Mean: {:08f}, Median: {:08f}, Max: {:08f}, Stddev: {:08f}".format(np.min(call_times), np.mean(call_times), np.median(call_times), np.max(call_times), np.std(call_times))
 
             if call_freq != len(call_times):
                 # then the __exit__ was not called due to some error. attach a warning.

@@ -3,6 +3,8 @@
 Python module to profile function performance: records the number of calls and
 outputs statistics about function execution times.
 
+**Status**: pip install is broken as of version 0.3. Fixing ASAP.
+
 ## Compatibility
 
 This package is intended for Python 3. It may also work for Python 2, but this 

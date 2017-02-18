@@ -16,8 +16,13 @@ class FunctionLogger(object):
     call_frequencies = {}
     call_times = {}
 
-    def __init__(self, function):
-        self.function_name = function.__name__
+    def __init__(self, function, naming):
+        if naming == 'qualname':
+            self.function_name = function.__qualname__
+        elif naming == 'name':
+            self.function_name = function.__name__
+        else:
+            raise ValueError("Invalid naming argument supplied to function_profiler: %s".format(naming))
 
     def __enter__(self):
         FunctionLogger.call_frequencies[self.function_name] = FunctionLogger.call_frequencies.get(self.function_name, 0) + 1
@@ -57,13 +62,15 @@ class FunctionLogger(object):
                     log_file.write(out_string)
 
 
-def function_profiler(function):
+def function_profiler(naming='qualname'):
     """
     decorator that uses FunctionLogger as a context manager to
     log information about this call of the function.
     """
-    def wrapper(*args, **kwargs):
-        with FunctionLogger(function):
-            return function(*args, **kwargs)
-    return wrapper
+    def layer(function):
+        def wrapper(*args, **kwargs):
+            with FunctionLogger(function, naming):
+                return function(*args, **kwargs)
+        return wrapper
+    return layer
 

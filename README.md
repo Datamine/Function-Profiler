@@ -133,4 +133,4 @@ However, I am willing to bless Python 2.7-compatible forks, should they appear.
 
 This package lives [here](https://pypi.python.org/pypi/function-profiler) on PyPI.
 
-There's also an entry about this project [on my blog](http://www.johnloeber.com/docs/function-profiler.html").
+There's also an entry about this project [on my blog](http://www.johnloeber.com/docs/function-profiler.html).

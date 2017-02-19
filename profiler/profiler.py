@@ -33,34 +33,59 @@ class FunctionLogger(object):
         call_times_so_far = FunctionLogger.call_times.get(self.function_name, [])
         FunctionLogger.call_times[self.function_name] = call_times_so_far + [seconds_taken]
 
-    def log_data(output_option):
+    def clear_data():
         """
-        logs the class variables to stdout, stderr, or to a file.
+        Clears the data stored in the class variables. No 'self' argument
+        because this is not run on an instance, but on the class itself.
         """
+        FunctionLogger.call_frequencies = {}
+        FunctionLogger.call_times = {}
+
+    def log_data(output_option='stderr'):
+        """
+        logs the class variables to stdout, stderr, or to a file. No 'self' arg
+        because this is not run on an instance, but on the class itself.
+        """
+
+        # for when we're logging to a file, rather than stderr or stdout
+        log_file_strings = []
+
         for function_key in FunctionLogger.call_frequencies.keys():
             call_freq = FunctionLogger.call_frequencies.get(function_key, 0)
             call_times = FunctionLogger.call_times.get(function_key, [])
 
-            stats_string = "No stats were recorded for this function. This is most likely an error."
-            if call_times != []:
-                # call_times == [] iff __enter__ was called with some function, but __exit__ was not
-                stats_string = "Min: {:08f}, Mean: {:08f}, Median: {:08f}, Max: {:08f}, Stddev: {:08f}".format(np.min(call_times), np.mean(call_times), np.median(call_times), np.max(call_times), np.std(call_times))
+            if call_times == []:
+                # call_times == [] iff __enter__ was called with this function, but __exit__ was not
+                stats_string = "No time stats were recorded for this function, despite it having been called. This is an error.\n"
+            else:
+                stats_string = ("Min: {:08f}, Max: {:08f}, Mean: {:08f}, Median: {:08f}, Stddev: {:08f}\n"
+                    .format(np.min(call_times), np.max(call_times), np.mean(call_times), np.median(call_times), np.std(call_times)))
+
 
             if call_freq != len(call_times):
-                # then the __exit__ was not called due to some error. attach a warning.
-                stats_string += ("\nWARNING: number of call times ({}) is not equal to call frequency count ({}). "
-                                "Suggests the program terminated while the function was running.\n").format(len(call_times), call_freq)
+                # for at least one function call, __enter__ was called but __exit__ was not. Attach a warning.
+                stats_string += ("WARNING: number of call times ({}) is not equal to call frequency count ({}). "
+                                "This suggests the function was called, but did not return as normal. Check for\n"
+                                "errors or program termination.\n").format(len(call_times), call_freq)
 
-            out_string = ("{}: {} calls. Time stats (seconds): " + stats_string + "\n").format(function_key, call_freq)
-
-            if output_option == 'stdout':
-                stdout.write(out_string)
-            elif output_option == 'stderr':
-                stderr.write(out_string)
+            if call_freq == 1:
+                call_text = "call"
             else:
-                with open(output_option, "w") as log_file:
-                    log_file.write(out_string)
+                call_text = "calls"
 
+            out_string = ("{}: {} {}. Time stats (s): " + stats_string).format(function_key, call_freq, call_text)
+
+            if output_option == 'stderr':
+                stderr.write(out_string)
+            elif output_option == 'stdout':
+                stdout.write(out_string)
+            else:
+                log_file_strings.append(out_string)
+
+        if log_file_strings:
+            with open(output_option, 'w') as out_file:
+                for out_string in log_file_strings:
+                    out_file.write(out_string)
 
 def function_profiler(naming='qualname'):
     """
@@ -74,3 +99,16 @@ def function_profiler(naming='qualname'):
         return wrapper
     return layer
 
+def with_logger(output='stderr'):
+    """
+    decorator that calls FunctionLogger.log_data when the decorated function
+    terminates, whether due to an exception or not.
+    """
+    def layer(function):
+        def wrapper(*args, **kwargs):
+            try:
+                function(*args, **kwargs)
+            finally:
+                FunctionLogger.log_data(output)
+        return wrapper
+    return layer

@@ -1,1 +1,3 @@
-baz: 1 calls. Time stats (seconds): Min: 0.000001, Mean: 0.000001, Median: 0.000001, Max: 0.000001, Stddev: 0.000000
+foo: 4 calls. Time stats (s): Min: 0.000001, Max: 0.000002, Mean: 0.000001, Median: 0.000001, Stddev: 0.000000
+bar: 3 calls. Time stats (s): Min: 0.000001, Max: 0.000001, Mean: 0.000001, Median: 0.000001, Stddev: 0.000000
+baz: 1 call. Time stats (s): Min: 0.000004, Max: 0.000004, Mean: 0.000004, Median: 0.000004, Stddev: 0.000000

@@ -4,6 +4,7 @@ tests for profiler/profiler.py
 """
 
 import unittest
+from unittest import mock
 import os, sys
 sys.path.append(os.getcwd())
 
@@ -11,20 +12,8 @@ import profiler
 
 class FunctionLogger(unittest.TestCase):
     """
-
-    """
-    pass
-
-class FunctionProfiler(unittest.TestCase):
-    """
-    tests for profiler.function_profiler
-    """
-    pass
-
-class General(unittest.TestCase):
-    """
-    This suite tests general use of the decorator, i.e. both the decorating function
-    profiler.function_profiler and the class profiler.FunctionLogger.
+    tests specifically for the modular functions in profiler.FunctionLogger
+    TODO: log_data function remains untested. Hard to implement
     """
 
     def setUp(self):
@@ -32,8 +21,96 @@ class General(unittest.TestCase):
         Because profiler.FunctionLogger relies on mutable class variables, we need
         to reset them between every set of tests.
         """
-        profiler.FunctionLogger.call_frequencies = {}
-        profiler.FunctionLogger.call_times = {}
+        profiler.FunctionLogger.clear_data()
+
+    def test_clear_data(self):
+        """
+        Tests that profiler.FunctionLogger.clear_data() clears the class variables
+        as expected.
+        """
+
+        @profiler.function_profiler()
+        def foo():
+            return
+        foo()
+        foo()
+
+        self.assertNotEqual(profiler.FunctionLogger.call_frequencies, {})
+        self.assertNotEqual(profiler.FunctionLogger.call_times, {})
+
+        profiler.FunctionLogger.clear_data()
+
+        self.assertEqual(profiler.FunctionLogger.call_frequencies, {})
+        self.assertEqual(profiler.FunctionLogger.call_times, {})
+
+class WithLogger(unittest.TestCase):
+    """
+    This suite tests that the decorator profiler.with_logger wraps a function
+    and calls FunctionLogger.log_data after the wrapped function terminates.
+    """
+
+    def setUp(self):
+        """
+        Because profiler.FunctionLogger relies on mutable class variables, we need
+        to reset them between every set of tests.
+        """
+        profiler.FunctionLogger.clear_data()
+        self.mock_log_data = mock.Mock(wraps=profiler.FunctionLogger.log_data)
+
+    def test_normal_termination(self):
+        """
+        tests that log_data is called when the function wrapped by
+        profiler.with_logger terminates as usual
+        """
+
+        @profiler.function_profiler()
+        def foo():
+            return
+
+        @profiler.with_logger()
+        def bar():
+            foo()
+
+        with mock.patch.object(profiler.FunctionLogger, 'log_data') as monkey:
+            bar()
+
+        monkey.assert_called_once()
+
+    def test_error_termination(self):
+        """
+        tests that log_data is called when the function wrapped by
+        profiler.with_logger terminates due to an Exception
+        """
+
+        @profiler.function_profiler()
+        def foo():
+            return
+
+        @profiler.with_logger()
+        def bar():
+            foo()
+            raise Exception("This function hits an error!")
+
+        try:
+            with mock.patch.object(profiler.FunctionLogger, 'log_data') as monkey:
+                bar()
+        except:
+            pass
+
+        monkey.assert_called_once()
+
+class General(unittest.TestCase):
+    """
+    This suite tests general of both the decorator profiler.function_profiler
+    and the class profiler.FunctionLogger.
+    """
+
+    def setUp(self):
+        """
+        Because profiler.FunctionLogger relies on mutable class variables, we need
+        to reset them between every set of tests.
+        """
+        profiler.FunctionLogger.clear_data()
 
     def test_decorator_default_naming(self):
         """
@@ -64,15 +141,17 @@ class General(unittest.TestCase):
 
         foo_name = "foo"
         self.assertEqual(profiler.FunctionLogger.call_frequencies, {foo_name: 1})
-        self.assertEqual(list(profiler.FunctionLogger.call_times.keys()), [foo_name])
+        self.assertCountEqual(profiler.FunctionLogger.call_times.keys(), [foo_name])
 
     def test_decorator_bad_naming(self):
         """
         Tests that naming arguments other than 'qualname' or 'name', if supplied to the decorator,
         cause an error to be thrown.
         """
-        with self.assertRaises(ValueError):
-            @profiler.function_profiler("blah")
+        bad_name = "blah"
+        exception_msg = "Invalid naming argument supplied to function_profiler: " + bad_name
+        with self.assertRaises(ValueError, msg=exception_msg):
+            @profiler.function_profiler(bad_name)
             def foo():
                 return
             foo()

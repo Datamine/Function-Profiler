@@ -187,7 +187,9 @@ class General(unittest.TestCase):
         baz()
         foo()
 
-        profiler.FunctionLogger.log_data('output')
+        # this printed statement clutters the output of the tests. TODO:
+        # find way to suppress this printed output.
+        profiler.FunctionLogger.log_data('stdout')
 
         expected_call_frequencies = {"foo": 4, "bar": 3, "baz": 1}
         self.assertCountEqual(profiler.FunctionLogger.call_frequencies, expected_call_frequencies)

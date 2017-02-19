@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='function-profiler',
-    version='0.4',
+    version='1.0',
     description='A Python decorator to profile function performance.',
     url='https://github.com/Datamine/Function-Profiler',
     author='John Loeber',

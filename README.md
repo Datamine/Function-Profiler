@@ -84,6 +84,7 @@ foo: 1 call. Time stats (seconds): Min: 0.000001, Mean: 0.000002, Median: 0.0000
 `profiler.FunctionLogger.log_data` takes one of three options:
 - `'stdout'` if you wish the output to be logged to stdout
 - `'stderr'` if you wish the output to be logged to stderr
+- `'suppress'` if you wish the output not to be logged
 - any other string, e.g. `'myfile.txt'` will cause the output to be logged to a file of that name.
 
 Since `with_logger` calls `profiler.FunctionLogger.log_data`, `with_logger` also accepts

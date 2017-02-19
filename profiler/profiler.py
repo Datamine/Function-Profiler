@@ -1,11 +1,11 @@
-from time import time
-from sys import stderr, stdout
-import numpy as np
-
 """
 Implements a decorator that counts the number of times a function was called,
 and collects statistics on how long it took to execute every single function call.
 """
+
+from time import time
+from sys import stderr, stdout
+import numpy as np
 
 class FunctionLogger(object):
     """
@@ -17,18 +17,29 @@ class FunctionLogger(object):
     call_times = {}
 
     def __init__(self, function, naming):
+        """
+        initialize an instance of FunctionLogger. Notably, the user should not ever have
+        to do this: this exists solely to create a context manager for function_profiler.
+        """
+        self.start_time = None
+
         if naming == 'qualname':
             self.function_name = function.__qualname__
         elif naming == 'name':
             self.function_name = function.__name__
         else:
-            raise ValueError("Invalid naming argument supplied to function_profiler: %s".format(naming))
+            raise ValueError(
+                "Invalid naming argument supplied to function_profiler: %s"
+                .format(naming)
+            )
 
     def __enter__(self):
-        FunctionLogger.call_frequencies[self.function_name] = FunctionLogger.call_frequencies.get(self.function_name, 0) + 1
+        FunctionLogger.call_frequencies[self.function_name] = (
+            FunctionLogger.call_frequencies.get(self.function_name, 0) + 1
+        )
         self.start_time = time()
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, type_, value, traceback):
         seconds_taken = time() - self.start_time
         call_times_so_far = FunctionLogger.call_times.get(self.function_name, [])
         FunctionLogger.call_times[self.function_name] = call_times_so_far + [seconds_taken]
@@ -53,27 +64,7 @@ class FunctionLogger(object):
         for function_key in FunctionLogger.call_frequencies.keys():
             call_freq = FunctionLogger.call_frequencies.get(function_key, 0)
             call_times = FunctionLogger.call_times.get(function_key, [])
-
-            if call_times == []:
-                # call_times == [] iff __enter__ was called with this function, but __exit__ was not
-                stats_string = "No time stats were recorded for this function, despite it having been called. This is an error.\n"
-            else:
-                stats_string = ("Min: {:08f}, Max: {:08f}, Mean: {:08f}, Median: {:08f}, Stddev: {:08f}\n"
-                    .format(np.min(call_times), np.max(call_times), np.mean(call_times), np.median(call_times), np.std(call_times)))
-
-
-            if call_freq != len(call_times):
-                # for at least one function call, __enter__ was called but __exit__ was not. Attach a warning.
-                stats_string += ("WARNING: number of call times ({}) is not equal to call frequency count ({}). "
-                                "This suggests the function was called, but did not return as normal. Check for\n"
-                                "errors or program termination.\n").format(len(call_times), call_freq)
-
-            if call_freq == 1:
-                call_text = "call"
-            else:
-                call_text = "calls"
-
-            out_string = ("{}: {} {}. Time stats (s): " + stats_string).format(function_key, call_freq, call_text)
+            out_string = make_output_string(function_key, call_times, call_freq)
 
             if output_option == 'stderr':
                 stderr.write(out_string)
@@ -86,6 +77,39 @@ class FunctionLogger(object):
             with open(output_option, 'w') as out_file:
                 for out_string in log_file_strings:
                     out_file.write(out_string)
+
+def make_output_string(fn_name, call_times, call_freq):
+    """
+    Construct a string that represents the log for this one particular function.
+        - fn_name: string, name of the function
+        - call_times: list of floats (lengths of function calls)
+        - call_freq: integer, number of times the function was called
+    """
+
+    if call_times == []:
+        # call_times == [] iff __enter__ was called with this fn, but __exit__ was not
+        stats_string = (
+            "No time stats were recorded for this function, "
+            "despite it having been called. This is an error.\n"
+        )
+    else:
+        stats_string = (
+            "Min: {:08f}, Max: {:08f}, Mean: {:08f}, Median: {:08f}, Stddev: {:08f}\n"
+            .format(np.min(call_times), np.max(call_times), np.mean(call_times),
+                    np.median(call_times), np.std(call_times))
+        )
+
+    if call_freq != len(call_times):
+        # for at least one call of this function, __enter__ was called but __exit__ was not.
+        stats_string += (
+            ("WARNING: number of call times ({}) is not equal to call frequency count ({}). "
+             "This suggests the function was called, but did not return as normal. Check "
+             "for errors or program termination.\n").format(len(call_times), call_freq)
+        )
+
+    call_text = "call" if (call_freq == 1) else "calls"
+
+    return "{}: {} {}. Time stats (s): {}".format(fn_name, call_freq, call_text, stats_string)
 
 def function_profiler(naming='qualname'):
     """

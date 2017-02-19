@@ -13,7 +13,9 @@ import profiler
 class FunctionLogger(unittest.TestCase):
     """
     tests specifically for the modular functions in profiler.FunctionLogger
-    TODO: log_data function remains untested. Hard to implement
+    TODO: log_data function remains untested. Tests for the output are both
+    somewhat tedious to implement, as well as trivial. The important logic
+    is in make_output_string, and is tested appropriately.
     """
 
     def setUp(self):
@@ -234,6 +236,53 @@ class General(unittest.TestCase):
 
         self.assertEqual(foo_call, 462)
         self.assertCountEqual(profiler.FunctionLogger.call_frequencies, {"foo": 1})
+
+class MakeOutputString(unittest.TestCase):
+    """
+    Tests for the function profiler.make_output_string
+    """
+
+    def test_with_empty_call_times(self):
+        log = profiler.make_output_string('foo', [], 5)
+        expected_log = (
+            "foo: 5 calls. Time stats (s): No time stats were recorded for this "
+            "function, despite it having been called. This is an error.\n"
+            "WARNING: number of call times (0) is not equal to call frequency count "
+            "(5). This suggests the function was called, but did not return as normal. "
+            "Check for errors or program termination.\n"
+        )
+
+        self.assertEqual(log, expected_log)
+
+    def test_with_unequal_call_times_and_freqs(self):
+        log = profiler.make_output_string('foo', [3, 4, 5], 10)
+        expected_log = (
+            "foo: 10 calls. Time stats (s): Min: 3.000000, Max: 5.000000, Mean: 4.000000, "
+            "Median: 4.000000, Stddev: 0.816497\n"
+            "WARNING: number of call times (3) is not equal to call frequency count (10). "
+            "This suggests the function was called, but did not return as normal. Check "
+            "for errors or program termination.\n"
+        )
+
+        self.assertEqual(log, expected_log)
+
+    def test_with_equal_call_times_and_freqs(self):
+        log = profiler.make_output_string('foo', [3, 4, 5], 3)
+        expected_log = (
+            "foo: 3 calls. Time stats (s): Min: 3.000000, Max: 5.000000, Mean: 4.000000, "
+            "Median: 4.000000, Stddev: 0.816497\n"
+        )
+
+        self.assertEqual(log, expected_log)
+
+    def test_with_one_call(self):
+        log = profiler.make_output_string('foo', [3], 1)
+        expected_log = (
+            "foo: 1 call. Time stats (s): Min: 3.000000, Max: 3.000000, Mean: 3.000000, "
+            "Median: 3.000000, Stddev: 0.000000\n"
+        )
+
+        self.assertEqual(log, expected_log)
 
 if __name__=='__main__':
     unittest.main()

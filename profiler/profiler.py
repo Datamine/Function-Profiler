@@ -61,7 +61,7 @@ class FunctionLogger(object):
         # for when we're logging to a file, rather than stderr or stdout
         log_file_strings = []
 
-        for function_key in FunctionLogger.call_frequencies.keys():
+        for function_key in sorted(FunctionLogger.call_frequencies.keys()):
             call_freq = FunctionLogger.call_frequencies.get(function_key, 0)
             call_times = FunctionLogger.call_times.get(function_key, [])
             out_string = make_output_string(function_key, call_times, call_freq)

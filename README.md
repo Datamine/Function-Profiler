@@ -74,7 +74,7 @@ def main():
 if __name__=='__main__':
     main()
 ```
-and we run this from the command line, i.e. `python3 example.py`. We get this output:
+and we run this from the command line, i.e. `python3 example.py`. We get this output at the command-line:
 ```
 foo: 1 call. Time stats (seconds): Min: 0.000001, Mean: 0.000002, Median: 0.000002, Max: 0.000003, Stddev: 0.000001
 ```
@@ -96,9 +96,8 @@ If you don't want the summary statistics but rather more granular ones, you can 
 - `profiler.FunctionLogger.call_times` is a dict mapping each function to a list of how long it took to complete each function call.
 
 Finally, `profiler.function_profiler` accepts one argument: a naming convention, either 
-`'qualname'` (default) or `'name'`. 
-
-`profiler.FunctionLogger` stores data on functions by using their names as keys. By default,
+`'qualname'` (default) or `'name'`. This is because `profiler.FunctionLogger` stores 
+data on functions by using their names as keys. By default,
 it uses the functions' fully qualified names in order to prevent name collisions, but by
 supplying `'name'` instead, it'll just use the function's local name.
 

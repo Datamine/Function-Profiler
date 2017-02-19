@@ -70,6 +70,9 @@ class FunctionLogger(object):
                 stderr.write(out_string)
             elif output_option == 'stdout':
                 stdout.write(out_string)
+            elif output_option == 'suppress':
+                # this is mostly intended for testing
+                pass
             else:
                 log_file_strings.append(out_string)
 

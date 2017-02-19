@@ -187,9 +187,7 @@ class General(unittest.TestCase):
         baz()
         foo()
 
-        # this printed statement clutters the output of the tests. TODO:
-        # find way to suppress this printed output.
-        profiler.FunctionLogger.log_data('stdout')
+        profiler.FunctionLogger.log_data('suppress')
 
         expected_call_frequencies = {"foo": 4, "bar": 3, "baz": 1}
         self.assertCountEqual(profiler.FunctionLogger.call_frequencies, expected_call_frequencies)
@@ -223,7 +221,10 @@ class General(unittest.TestCase):
         additional_function_qualname = "General.test_on_class_methods.<locals>.Foo.additional_function"
         expected_call_frequencies = {"__init__": 3, additional_function_qualname: 2}
         self.assertCountEqual(profiler.FunctionLogger.call_frequencies, expected_call_frequencies)
-        self.assertCountEqual(profiler.FunctionLogger.call_times.keys(), ["__init__", additional_function_qualname])
+        self.assertCountEqual(
+            profiler.FunctionLogger.call_times.keys(),
+            ["__init__", additional_function_qualname]
+        )
 
     def test_args_and_kwargs(self):
         """
